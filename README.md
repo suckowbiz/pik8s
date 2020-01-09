@@ -53,8 +53,7 @@ ssh pi@<control-plane-host> "sudo cat /etc/kubernetes/admin.conf" > $HOME/.kube/
 To verify function of the Kubernetes cluster run:
 
 ```bash
-# Provide the current master node external IP
-export API_IP='192.168.220.10'
+# Requires kubectl
 ./smoke-test.sh
 ```
 
