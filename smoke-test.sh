@@ -8,7 +8,7 @@ if [[ "${API_IP}" = "" ]]; then
   exit
 fi
 
-echo "Cleaning up orphans from possible previous runs..."
+echo "Cleaning up orphans from possible previous failed runs..."
 kubectl delete deployments.apps nginx 2>/dev/null
 
 echo -e "\n\n1. Verifying the ability to create and manage deployments..."
@@ -67,3 +67,5 @@ else
   echo "Failure. Service not reachable."
   exit
 fi
+
+kubectl delete deployments.apps nginx 2>/dev/null
