@@ -4,14 +4,14 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 
 ## Prerequisites
 
-- **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as kubernetes nodes. It is assumed [Raspbian Buster](https://www.raspberrypi.org/downloads/raspbian/) is installed, SSH is running and Pi-to-Pi/Internet connectivity is in place.
+- **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as Kubernetes nodes. It is assumed [Raspbian Buster](https://www.raspberrypi.org/downloads/raspbian/) is installed, SSH access is possible and Pi-to-Pi/Internet connectivity is in place.
 - **Software**: Ansible Playbook >= 2.8.2 to deploy the cluster.
 
 ## Usage
 
 Initial set up:
 
-1. Enable SSH access to Raspberry Pi required for Ansible deployment (replace `<ip>` with Raspberry ip):
+1. Enable SSH access for each of the Raspberry Pi's required for Ansible deployment (replace `<ip>` with Raspberry ip):
 
     ```bash
     # (If required generate local SSH key via: ssh-keygen)
