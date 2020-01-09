@@ -1,0 +1,14 @@
+---
+# Drain the master to ease worker deregistration.
+- hosts: master
+  become: yes
+  gather_facts: no
+  roles:
+    - control-plane/drain
+
+# Tear down all cluster members to clean up.
+- hosts: all
+  become: yes
+  gather_facts: no
+  roles:
+    - shared/reset

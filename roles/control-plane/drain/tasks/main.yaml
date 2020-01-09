@@ -1,0 +1,14 @@
+# Intentionally created to to tear down a node
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#tear-down
+---
+- name: Drain workers to make sure they are empty
+  shell: kubectl drain "{{ item }}" --delete-local-data --force --ignore-daemonsets
+  with_inventory_hostnames:
+    - workers
+  ignore_errors: yes
+
+- name: Delete workers to remove them from cluster
+  shell: kubectl delete node "{{ item }}"
+  with_inventory_hostnames:
+    - workers
+  ignore_errors: yes

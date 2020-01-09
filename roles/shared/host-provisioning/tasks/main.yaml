@@ -1,0 +1,39 @@
+# Intentionally created to bake Raspberry Pi
+---
+- name: Check presence of indicator file to run password change on demand
+  shell: test -e "{{ marker.password_changed }}"
+  register: password_changed
+  ignore_errors: yes
+  changed_when: no
+
+# Sets an unkown password since the 'pi' user has paswordless sudo access and SSH pub key connection is in place.
+- name: Randomize default password to ensure security
+  shell: /usr/sbin/chpasswd
+  args:
+    stdin: "pi:{{ 'passwordsaresecret'|password_hash('sha512') }}"
+  notify: mark password changed
+  when: 
+    - password_changed is defined
+    - password_changed is failed
+
+# https://wiki.debian.org/Suspend
+- name: Disable suspend and hibernation to avoid box not reachable
+  systemd:
+    masked: yes
+    name: "{{ item }}"
+  loop:
+    - sleep.target
+    - suspend.target
+    - hibernate.target
+    - hybrid-sleep.target
+
+- name: Update apt cache to provide latest content
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+  changed_when: false
+
+- name: Update OS packages and handle dependency changes to stay up-to-date
+  apt:
+    upgrade: dist
+    force_apt_get: yes

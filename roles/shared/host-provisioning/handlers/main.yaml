@@ -1,0 +1,6 @@
+# Intentionally created to avoid password change runs more than once
+---
+- name: mark password changed
+  file:
+    path: "{{ marker.password_changed }}"
+    state: touch

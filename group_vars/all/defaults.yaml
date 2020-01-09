@@ -1,0 +1,25 @@
+# Intentionally created to have a place for variables
+---
+api:
+  ip: 192.168.220.10
+  port: 6443
+
+flannel:
+  # DO NOT CHANGE. Flannel requires this range.
+  pod_cidr: 10.244.0.0/16
+
+# Some helper to stay idempotent
+marker:
+  cluster_joined: /marker-cluster-joined
+  flannel_applied: /marker-flannel-applied
+  kubeadm_holded: /marker-kubeadm-holded
+  kubeadm_inited: /marker-kubeadm-inited
+  password_changed: /marker-password-changed
+  swap_disabled: /marker-swap-disabled
+
+versions:
+  docker: 18.09.1*
+  etcdctl: v3.3.18
+  # TODO: Upgrade not implemented, yet
+  # https://v1-16.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+  k8s: 1.17.0*

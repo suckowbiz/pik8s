@@ -1,0 +1,32 @@
+# Intentionally created to init flannel
+# See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network
+---
+- name: Verify connectivity to gcr.io registries to init flannel
+  shell: kubeadm config images pull
+  args:
+    creates: "{{ marker.flannel_applied }}"
+
+- name: download kube-flannel.yaml to apply it to K8s
+  get_url:
+    url: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    dest: /var/tmp/kube-flannel.yaml
+  register: kube_flannel_fetched
+
+# Raspbian runs in 32bit mode because 64bit is not ready, yet.
+- name: Edit kube-flannel.yaml to support arm 32 bit (comes with only arm64 support) and host-gw instead of not working VXLAN
+  replace:
+    path: /var/tmp/kube-flannel.yaml
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  loop:
+    - { regexp: 'amd64', replace: 'arm' }
+    - { regexp: 'vxlan', replace: 'host-gw' }
+  when:
+    - kube_flannel_fetched is defined
+    - kube_flannel_fetched.changed
+
+- name: Create the Flannel resources to manage routes and complete Pod-to-Pod networking
+  shell: kubectl apply -f /var/tmp/kube-flannel.yaml
+  args:
+    creates: "{{ marker.flannel_applied }}"
+  notify: mark flannel applied

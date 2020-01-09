@@ -1,0 +1,6 @@
+# Intentionally created to avoid cluster join is run more than once
+---
+- name: mark cluster joined
+  file:
+    path: "{{ marker.cluster_joined }}"
+    state: touch

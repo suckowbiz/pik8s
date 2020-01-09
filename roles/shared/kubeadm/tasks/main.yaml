@@ -1,0 +1,83 @@
+# Intentionally created to install kubeadm toolbox
+---
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin
+- name: Apply unique hostname to satisfy kubeadm requirements
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin
+- name: Disable swap in order for the kubelet to work properly
+  shell: swapoff --all
+  args:
+    creates: "{{ marker.swap_disabled }}"
+  notify: mark swap disabled
+
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#ensure-iptables-tooling-does-not-use-the-nftables-backend
+- name: Replace nftables with iptables to be compatible with the current kubeadm packages (duplicated firewall rules, breaks kube-proxy)
+  block:
+    - name: Provide missing legacy versions for nftables toolbox as fallback
+      apt:
+        name: "{{ item }}"
+        state: present
+        force_apt_get: yes
+      loop:
+        - arptables
+        - ebtables
+    - name: Apply legacy fallback to avoid nftables
+      alternatives:
+        name: "{{ item.name }}"
+        path: "{{ item.path }}"
+      loop:
+        - { name: 'iptables', path: '/usr/sbin/iptables-legacy' }
+        - { name: 'ip6tables', path: '/usr/sbin/ip6tables-legacy' }
+        - { name: 'arptables', path: '/usr/sbin/arptables-legacy' }
+        - { name: 'ebtables', path: '/usr/sbin/ebtables-legacy' }
+
+- name: unlock docker version to install docker
+  shell: apt-mark unhold docker.io
+
+- name: Install Docker to provide a runtime for K8s
+  apt:
+    autoremove: yes
+    # allow downgrade if neccessary
+    force: true
+    name: "docker.io={{ versions.docker }}"
+    state: present
+    force_apt_get: yes
+
+- name: lock docker version to avoid unwanted change
+  shell: apt-mark hold docker.io    
+
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
+- name: Set up kubeadm tooling to be able to create a cluster
+  block:
+    - name: Add apt signing key for kubeadm tooling to ensure security
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+    # Only kubernetes-xenial provides all required packages. Beside it is recommended here: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
+    - name: Add repository to fetch Kubernetes tools
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main 
+        state: present
+    - name: Update apt caches to consider added kubernetes repository
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+    - name: unhold kubeadm tooling to enable re-installation
+      shell: apt-mark unhold kubelet kubeadm kubectl
+    - name: Install kubeadm tools to provide them for usage
+      apt:
+        autoremove: yes
+        # allow downgrade if neccessary
+        force: true
+        name: "{{ item }}"
+        force_apt_get: yes
+      loop:
+        - "kubelet={{ versions.k8s }}"
+        - "kubeadm={{ versions.k8s }}"
+        - "kubectl={{ versions.k8s }}"
+    - name: setting hold to fix kubeadm tooling since upgrade requires special attention
+      shell: apt-mark hold kubelet kubeadm kubectl
+
+# TODO Upgrade kubeadm tooling  https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/

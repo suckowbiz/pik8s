@@ -1,0 +1,6 @@
+# Intentionally created to avoid kubeadm init is is run more than once
+---
+    - name: mark kubeadm inited
+      file:
+        path: "{{ marker.kubeadm_inited }}"
+        state: touch

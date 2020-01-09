@@ -1,0 +1,6 @@
+# Intentionally created to avoid flannel applied is run more than once
+---
+- name: mark flannel applied
+  file:
+    path: "{{ marker.flannel_applied }}"
+    state: touch

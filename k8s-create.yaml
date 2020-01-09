@@ -1,0 +1,39 @@
+---
+# Bake all hosts to be ready for Kubernetes initialization.
+- hosts: all
+  become: yes
+  gather_facts: no
+  roles:
+    - shared/host-provisioning
+    - shared/kubeadm
+
+# Bake the control-plane to prepare worker registration.
+- hosts: master
+  become: yes
+  gather_facts: no
+  roles:
+    - control-plane/bootstrap
+  post_tasks:
+    - name: Generate a 24h valid k8s deploy token for instant usage
+      shell: /usr/bin/kubeadm token create 2>/dev/null
+      register: token_result
+
+# Register workers at master to create a cluster.
+- hosts: workers
+  become: yes
+  gather_facts: no
+  pre_tasks:
+    - name: Copy over k8s token to use for worker registration
+      set_fact:
+        k8s_token: "{{ hostvars['pi10.dmz.local']['token_result'].stdout }}"
+    - debug:
+        var: k8s_token 
+  roles:
+    - data-plane/register
+
+# Deploy Kubernetes Plugins to complete.
+- hosts: master
+  become: yes
+  gather_facts: no
+  roles:
+    - control-plane/cni

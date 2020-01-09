@@ -1,0 +1,24 @@
+---
+# Wording: https://kubernetes.io/de/docs/reference/glossary
+all:
+  children:
+    nodes:
+      children:
+        master:
+        workers:
+        
+master:
+  hosts:
+    pi10.dmz.local:
+
+workers:
+  children:
+    worker_1:
+      hosts:
+        pi11.dmz.local:
+    worker_2:
+      hosts:
+        pi12.dmz.local:
+    worker_3:
+      hosts:
+        pi13.dmz.local:
