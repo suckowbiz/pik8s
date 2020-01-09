@@ -1,6 +1,6 @@
 # README
 
-This repository was created to deploy a **Kubernetes** (K8s) cluster on **Rasbperry Pi** boxes with **Ansible** for **testing purpose**.
+This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspberry Pi** boxes with **Ansible** for **testing purpose**.
 
 ## Prerequisites
 
@@ -53,6 +53,7 @@ ssh pi@<control-plane-host> "sudo cat /etc/kubernetes/admin.conf" > $HOME/.kube/
 To verify function of the Kubernetes cluster run:
 
 ```bash
+# Ensure the 'admin.conf' was copied over as described above in "API ACCESS"
 # Requires kubectl
 ./smoke-test.sh
 ```

@@ -57,6 +57,7 @@ fi
 
 echo -e "\n\n5. Verify the ability to expose applications using a service."
 kubectl expose deployment nginx --port 80 --type NodePort
+sleep 5
 readonly NODE_PORT=$(kubectl get svc nginx --output=jsonpath='{range .spec.ports[0]}{.nodePort}')
 readonly SERVICE_CALL_RES=$(curl --silent --head http://${API_IP}:${NODE_PORT} 1>/dev/null; echo $?)
 kubectl delete service nginx
