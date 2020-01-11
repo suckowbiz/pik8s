@@ -1,12 +1,6 @@
 # Intentionally created to set up control-plane (API)
 # See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 ---
-- name: Enable routing to avoid network issues at Kubernetes API 
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    sysctl_set: yes
-
 - name: Pass bridged IPv4 traffic to iptables as required by CNI plugins to work
   sysctl:
     name: net.bridge.bridge-nf-call-iptables
