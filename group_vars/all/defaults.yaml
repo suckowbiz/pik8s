@@ -18,8 +18,8 @@ marker:
   swap_disabled: /marker-swap-disabled
 
 versions:
-  docker: 18.09.1*
-  etcdctl: v3.3.18
+  docker: 18.09.1
+  flannel: 0.11.0
   # TODO: Upgrade not implemented, yet
   # https://v1-16.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
-  k8s: 1.17.0*
+  k8s: 1.17.0

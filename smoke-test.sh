@@ -4,7 +4,7 @@
 readonly GREP_RUNNING_NGINX='kubectl get pods -l app=nginx  |grep "Running" --count'
 if [[ "${API_IP}" = "" ]]; then
   echo "Failure to read API_IP. Provide the current master node external IP to run tests."
-  echo "Example: 'export API_IP=192.168.220."
+  echo "Example: 'export API_IP=192.168.220.10'"
   exit
 fi
 
@@ -13,19 +13,20 @@ kubectl delete deployments.apps nginx 2>/dev/null
 
 echo -e "\n\n1. Verifying the ability to create and manage deployments..."
 kubectl create deployment nginx --image=nginx
-echo "Wait for nginx to be 'Running'..."
+echo "Waiting for nginx to be 'Running'..."
 grep_result=$(eval "${GREP_RUNNING_NGINX}")
 while [[ "${grep_result}" != "1" ]]; do
   grep_result=$(eval "${GREP_RUNNING_NGINX}")
   sleep 10
 done
 echo "Success. Found nginx 'Running'."
+sleep5
 
 echo -e "\n\n2. Verifying the ability to access applications remotely using port forwarding"
 readonly POD_NAME=$(kubectl get pods -l app=nginx -o jsonpath="{.items[0].metadata.name}")
 (kubectl port-forward "${POD_NAME}" 6080:80)&
 readonly FORWARD_PID=$!
-sleep 3
+sleep 5
 readonly CURL_RES=$(curl --silent --head http://127.0.0.1:6080 1>/dev/null; echo $?)
 kill -9 ${FORWARD_PID}
 if [[ "${CURL_RES}" = "0" ]]; then
@@ -59,13 +60,14 @@ echo -e "\n\n5. Verify the ability to expose applications using a service."
 kubectl expose deployment nginx --port 80 --type NodePort
 sleep 5
 readonly NODE_PORT=$(kubectl get svc nginx --output=jsonpath='{range .spec.ports[0]}{.nodePort}')
-readonly SERVICE_CALL_RES=$(curl --silent --head http://${API_IP}:${NODE_PORT} 1>/dev/null; echo $?)
-kubectl delete service nginx
+readonly SERVICE_CALL_RES=$(curl --silent --head "http://${API_IP}:${NODE_PORT}" 1>/dev/null; echo $?)
+echo "NodePort: ${NODE_PORT}"
 if [[ "${SERVICE_CALL_RES}" = "0" ]]; then
   echo "Success. Service exposed."
 else
   echo "Failure. Service not reachable."
-  exit
 fi
+echo -e '\n\n'
 
+kubectl delete service nginx || true
 kubectl delete deployments.apps nginx 2>/dev/null

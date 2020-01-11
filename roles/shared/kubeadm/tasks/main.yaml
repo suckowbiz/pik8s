@@ -41,7 +41,7 @@
     autoremove: yes
     # allow downgrade if neccessary
     force: true
-    name: "docker.io={{ versions.docker }}"
+    name: "docker.io={{ versions.docker }}*"
     state: present
     force_apt_get: yes
 
@@ -74,9 +74,9 @@
         name: "{{ item }}"
         force_apt_get: yes
       loop:
-        - "kubelet={{ versions.k8s }}"
-        - "kubeadm={{ versions.k8s }}"
-        - "kubectl={{ versions.k8s }}"
+        - "kubelet={{ versions.k8s }}*"
+        - "kubeadm={{ versions.k8s }}*"
+        - "kubectl={{ versions.k8s }}*"
     - name: setting hold to fix kubeadm tooling since upgrade requires special attention
       shell: apt-mark hold kubelet kubeadm kubectl
 

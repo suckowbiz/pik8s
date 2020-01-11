@@ -8,7 +8,7 @@
 
 - name: download kube-flannel.yaml to apply it to K8s
   get_url:
-    url: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    url: "https://raw.githubusercontent.com/coreos/flannel/v{{ versions.flannel }}/Documentation/kube-flannel.yml"
     dest: /var/tmp/kube-flannel.yaml
   register: kube_flannel_fetched
 
