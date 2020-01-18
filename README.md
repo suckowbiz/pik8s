@@ -18,9 +18,9 @@ Initial set up:
     # Default password: 'raspberry'
     ssh-copy-id -o "StrictHostKeyChecking no" pi@<ip>
     ```
-1. Edit hostnames in `./hosts.yaml` to enable Ansible host location.
-1. Change api ip in `./group_vars/all/defaults.yaml` to configure the API announcement.
-1. Replace `pi10.dmz.local` at line `k8s_token: "{{ hostvars['pi10.dmz.local']['token_result'].stdout }}"` in `./k8s-create.yaml` with the hostname of the master node to fetch a Kubernetes token for worker registration.
+1. Edit hostnames in `./ansible/hosts.yaml` to enable Ansible host location.
+1. Change api ip in `./ansible/group_vars/all/defaults.yaml` to configure the API announcement.
+1. Replace `pi10.dmz.local` at line `k8s_token: "{{ hostvars['pi10.dmz.local']['token_result'].stdout }}"` in `./ansible/k8s-create.yaml` with the hostname of the master node to fetch a Kubernetes token for worker registration.
 
 ### Create K8s Cluster
 
