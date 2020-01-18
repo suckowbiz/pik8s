@@ -27,7 +27,7 @@ Initial set up:
 Run:
 
 ```bash
-./k8s-create.sh
+./create.sh
 ```
 
 ### Delete K8s Cluster
@@ -35,7 +35,7 @@ Run:
 Run:
 
 ```bash
-./k8s-destroy.sh
+./destroy.sh
 ```
 
 ### API Access
