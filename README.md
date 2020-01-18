@@ -27,7 +27,7 @@ Initial set up:
 Run:
 
 ```bash
-ansible-playbook k8s-create.yaml
+./k8s-create.sh
 ```
 
 ### Delete K8s Cluster
@@ -35,7 +35,7 @@ ansible-playbook k8s-create.yaml
 Run:
 
 ```bash
-ansible-playbook k8s-destroy.yaml
+./k8s-destroy.sh
 ```
 
 ### API Access
