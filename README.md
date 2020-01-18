@@ -7,6 +7,21 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 - **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as Kubernetes nodes. It is assumed [Raspbian Buster](https://www.raspberrypi.org/downloads/raspbian/) is installed, SSH access is possible and Pi-to-Pi/Internet connectivity is in place.
 - **Software**: Ansible Playbook >= 2.8.2 to deploy the cluster.
 
+## Considerations
+
+Choises made:
+
+1. Which provider should I use? A public or private cloud? Physical or virtual?
+   **Physical on Raspberry Pi's**
+1. Which operating system should I use? Kubernetes runs on most operating systems (e.g. Debian, Ubuntu, CentOS, etc.), plus on container-optimized OSes (e.g. CoreOS, Atomic).
+   **Raspbian**
+1. Which networking solution should I use? Do I need an overlay?
+   **Flannel**
+1. Where should I run my etcd cluster?
+   **Together with the API at single master node**
+1. Can I configure Highly Available (HA) head nodes?
+   **A Single master node does not support HA**
+
 ## Usage
 
 Initial set up:
