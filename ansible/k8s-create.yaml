@@ -2,7 +2,7 @@
 # Bake all hosts to be ready for Kubernetes initialization.
 - hosts: all
   become: yes
-  gather_facts: no
+  gather_facts: yes
   roles:
     - shared/host-provisioning
     - shared/kubeadm

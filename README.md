@@ -37,6 +37,12 @@ Initial set up:
 
 ### Create K8s Cluster
 
+Note: Cluster creation assumes the nodes are free to use and involves host provisioning that:
+
+- disables bluetooth
+- disables wifi
+- sets a random default passwort
+
 Run:
 
 ```bash

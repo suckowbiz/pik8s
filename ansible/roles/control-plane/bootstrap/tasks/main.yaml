@@ -1,24 +1,24 @@
 # Intentionally created to set up control-plane (API)
 # See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 ---
-- name: Pass bridged IPv4 traffic to iptables as required by CNI plugins to work
+- name: pass bridged IPv4 traffic to iptables as required by CNI plugins to work
   sysctl:
     name: net.bridge.bridge-nf-call-iptables
     value: '1'
     state: present  
         
 - block:
-    - name: Initialize kubeadm to init control plane node
+    - name: initialize kubeadm to init control plane node
       shell: kubeadm init --pod-network-cidr {{ flannel.pod_cidr }} --apiserver-advertise-address {{ api.ip }}
       args:
         creates: "{{ marker.kubeadm_inited }}"
       notify: mark kubeadm inited
-    - name: Create a directory to hold KUBECONFIG
+    - name: create a directory to hold KUBECONFIG
       file:
         path: /root/.kube
         state: directory
         mode: '0755'
-    - name: Copy kubernetes cluster config to let Ansible (privilege escalation as 'root') start using the cluster
+    - name: copy kubernetes cluster config to let Ansible (privilege escalation as 'root') start using the cluster
       copy:
         src: /etc/kubernetes/admin.conf
         remote_src: yes

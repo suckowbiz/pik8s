@@ -11,6 +11,7 @@ flannel:
 # Some helper to stay idempotent
 marker:
   cluster_joined: /marker-cluster-joined
+  docker_inited: /marker-docker-inited
   flannel_applied: /marker-flannel-applied
   kubeadm_holded: /marker-kubeadm-holded
   kubeadm_inited: /marker-kubeadm-inited
@@ -18,7 +19,10 @@ marker:
   swap_disabled: /marker-swap-disabled
 
 versions:
-  docker: 18.09.1
+  #// For Raspbian, installing using the repository is not yet supported. You must instead use the convenience script.
+  #--> /etc/apt/sources.list.d/docker.list
+  docker: 5:19.03.4
+  containerd: 1.2.10
   flannel: 0.11.0
   # TODO: Upgrade not implemented, yet
   # https://v1-16.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/

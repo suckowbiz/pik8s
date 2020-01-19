@@ -1,10 +1,10 @@
 # Intentionally created to delete a node
 # See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#tear-down
 ---
-- name: Reset kubeadm installed state to tear down
+- name: reset kubeadm installed state to tear down
   shell: kubeadm reset --force
 
-- name: Reset iptables to clean up
+- name: reset iptables to clean up
   shell: "{{ item }}"
   loop:
     - "iptables -F"
@@ -12,7 +12,7 @@
     - "iptables -t mangle -F"
     - "iptables -X"
 
-- name: Clean directories to remove orphans
+- name: clean directories to remove orphans
   file:
     path: "{{ item }}"
     state: absent
@@ -25,12 +25,12 @@
     - "{{ marker.cluster_joined }}"
     - "{{ marker.flannel_applied }}"
 
-- name: Clean up flannel networks to avoid networkPlugin cni failes to set up pod network
+- name: clean up flannel networks to avoid networkPlugin cni failes to set up pod network
   shell: "{{ item }}"
   loop:
     - "ip link delete cni0"
     - "ip link delete flannel.1"
   ignore_errors: yes
 
-- name: Clean up Docker images to free space
+- name: clean up Docker images to free space
   shell: docker system prune --force

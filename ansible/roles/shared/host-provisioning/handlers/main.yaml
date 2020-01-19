@@ -4,3 +4,13 @@
   file:
     path: "{{ marker.password_changed }}"
     state: touch
+
+- name: mark docker inited
+  file:
+    path: "{{ marker.docker_inited }}"
+    state: touch
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted

@@ -1,6 +1,6 @@
 # Intentionally created to let worker join cluster
 ---
-- name: Let worker join to extend the cluster
+- name: let worker join to extend the cluster
   shell: kubeadm join --token={{ k8s_token }} --discovery-token-unsafe-skip-ca-verification {{ api.ip }}:{{ api.port }}
   args:
     creates: "{{ marker.cluster_joined }}"
