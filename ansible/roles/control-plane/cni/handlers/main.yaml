@@ -1,6 +1,6 @@
-# Intentionally created to avoid flannel applied is run more than once
+# Intentionally created to avoid CNI applied is run more than once
 ---
-- name: mark flannel applied
+- name: mark cni applied
   file:
-    path: "{{ marker.flannel_applied }}"
+    path: "{{ marker.cni_applied }}"
     state: touch

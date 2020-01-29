@@ -1,29 +1,9 @@
 # Intentionally created to install docker in a specific version.
 ---
-# https://docs.docker.com/install/linux/docker-ce/debian/#install-using-the-convenience-script
-- name: initial(!) Docker installation since for Raspbian the intial repository installation is not supported
-  block:
-    - name: download docker installation script to run it
-      get_url:
-        url: https://get.docker.com
-        dest: /get-docker.sh
-        mode: '0755'
-    - name: run Docker installation script to initially(!) install Docker
-      shell: LC_ALL=C /get-docker.sh
-      args:
-        creates: "{{ marker.docker_inited }}"
-      notify: mark docker inited
-    - name: enable 'pi' user to use Docker as a non-root user
-      user:
-        name: pi
-        groups: docker
-
-# After installed Docker using the convenience script, upgrade Docker should happen via package manager directly
-# https://docs.docker.com/install/linux/docker-ce/debian/#install-using-the-convenience-script
 - name: up/downgrade Docker to add the required version
   block:
   - name: remove holds to unfix Docker version
-    shell: apt-mark unhold docker-ce docker-ce-cli containerd.io
+    shell: apt-mark unhold docker.io
   - name: installing Docker "{{ versions.docker }}"
     apt:
       autoremove: yes
@@ -31,14 +11,13 @@
       force: true
       force_apt_get: yes
       name:
-        - "docker-ce={{ versions.docker }}*"
-        - "docker-ce-cli={{ versions.docker }}*"
-        - "containerd.io={{ versions.containerd }}*"
+        - "docker.io={{ versions.docker }}*"
   - name: setting hold to fix Docker version to avoid an unwanted upgrade
-    shell: apt-mark hold docker-ce docker-ce-cli containerd.io
-  - name: configure Docker to start on boot
+    shell: apt-mark hold docker.io
+  - name: start and enable Docker to start on boot
     service:
       enabled: yes
+      state: started
       name: docker
   - name: placing Docker daemon configuration file
     copy:

@@ -1,32 +1,33 @@
-# Intentionally created to init flannel
-# See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network
+# Intentionally created to init a CNI
 ---
-- name: verify connectivity to gcr.io registries to init flannel
+- name: verify connectivity to gcr.io registries to init kubeadm
   shell: kubeadm config images pull
   args:
-    creates: "{{ marker.flannel_applied }}"
+    creates: "{{ marker.cni_applied }}"
 
-- name: download kube-flannel.yaml to apply it to K8s
-  get_url:
-    url: "https://raw.githubusercontent.com/coreos/flannel/v{{ versions.flannel }}/Documentation/kube-flannel.yml"
-    dest: /var/tmp/kube-flannel.yaml
-  register: kube_flannel_fetched
+- block:
+  - name: download Calico manifests to provide CNI
+    get_url:
+      url: "{{ item.url }}"
+      dest: "/var/tmp/{{ item.name }}.yaml"
+    register: calico_fetched
+    loop:
+      - { name: calico, url: "https://docs.projectcalico.org/v{{ versions.calico }}/manifests/calico.yaml" }
+      - { name: calico_rbac, url: "https://docs.projectcalico.org/v{{ versions.calico_rback }}/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml" }
+  - name: edit calico manifest to change the required network cidr
+    replace:
+      path: /var/tmp/calico.yaml
+      regexp: "192.168.0.0\/16"
+      replace: "{{ kubeadm.pod_network_cidr }}"
+    when:
+      - calico_fetched is defined
+      - calico_fetched.changed  
 
-# Raspbian runs in 32bit mode because 64bit is not ready, yet.
-- name: edit kube-flannel.yaml to support arm 32 bit (comes with only arm64 support) and host-gw instead of not working VXLAN
-  replace:
-    path: /var/tmp/kube-flannel.yaml
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  loop:
-    - { regexp: 'amd64', replace: 'arm' }
-    - { regexp: 'vxlan', replace: 'host-gw' }
-  when:
-    - kube_flannel_fetched is defined
-    - kube_flannel_fetched.changed
-
-- name: create the Flannel resources to manage routes and complete Pod-to-Pod networking
-  shell: kubectl apply -f /var/tmp/kube-flannel.yaml
+- name: create the Calico resources to manage routes and complete Pod-to-Pod networking
+  shell: kubectl apply -f {{ item }}
   args:
-    creates: "{{ marker.flannel_applied }}"
-  notify: mark flannel applied
+    creates: "{{ marker.cni_applied }}"
+  notify: mark cni applied
+  loop:
+    - /var/tmp/calico.yaml
+    - /var/tmp/calico_rbac.yaml

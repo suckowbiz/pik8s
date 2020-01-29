@@ -8,18 +8,18 @@
     state: present  
         
 - block:
-    - name: initialize kubeadm to init control plane node
-      shell: kubeadm init --pod-network-cidr {{ flannel.pod_cidr }} --apiserver-advertise-address {{ api.ip }}
-      args:
-        creates: "{{ marker.kubeadm_inited }}"
-      notify: mark kubeadm inited
-    - name: create a directory to hold KUBECONFIG
-      file:
-        path: /root/.kube
-        state: directory
-        mode: '0755'
-    - name: copy kubernetes cluster config to let Ansible (privilege escalation as 'root') start using the cluster
-      copy:
-        src: /etc/kubernetes/admin.conf
-        remote_src: yes
-        dest: /root/.kube/config
+  - name: initialize kubeadm to init control plane node
+    shell: kubeadm init --control-plane-endpoint {{ api.host }}:{{ api.port }} --pod-network-cidr {{ kubeadm.pod_network_cidr }} --kubernetes-version={{ versions.k8s }} --upload-certs
+    args:
+      creates: "{{ marker.kubeadm_inited }}"
+    notify: mark kubeadm inited
+  - name: create a directory to hold KUBECONFIG
+    file:
+      path: /root/.kube
+      state: directory
+      mode: '0755'
+  - name: copy kubernetes cluster config to let Ansible (privilege escalation as 'root') start using the cluster
+    copy:
+      src: /etc/kubernetes/admin.conf
+      remote_src: yes
+      dest: /root/.kube/config

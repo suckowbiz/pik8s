@@ -19,17 +19,16 @@
   loop:
     - "/root/.kube"
     - "/etc/cni"
-    - "/run/flannel"
     - "/var/lib/cni/"
+    - "/var/etcd/calico-data"
     - "{{ marker.kubeadm_inited }}"
     - "{{ marker.cluster_joined }}"
-    - "{{ marker.flannel_applied }}"
+    - "{{ marker.cni_applied }}"
 
-- name: clean up flannel networks to avoid networkPlugin cni failes to set up pod network
+- name: clean up Calico networks to avoid networkPlugin cni failes to set up pod network
   shell: "{{ item }}"
   loop:
-    - "ip link delete cni0"
-    - "ip link delete flannel.1"
+    - "ip link delete tunl0"
   ignore_errors: yes
 
 - name: clean up Docker images to free space

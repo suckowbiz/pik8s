@@ -51,4 +51,3 @@
   when:
     - bootconfig is defined
     - bootconfig.changed
-  
