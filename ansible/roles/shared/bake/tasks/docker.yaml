@@ -1,8 +1,6 @@
 # Intentionally created to install docker in a specific version.
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
 ---
-#https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
 - name: uninstall older version of docker to clean up first
   apt:
     pkg:
