@@ -3,6 +3,7 @@
 ---
 - name: reset kubeadm installed state to tear down
   shell: kubeadm reset --force
+  ignore_errors: yes
 
 - name: reset iptables to clean up
   shell: "{{ item }}"
@@ -25,7 +26,7 @@
     - "{{ marker.cluster_joined }}"
     - "{{ marker.cni_applied }}"
 
-- name: clean up Calico networks to avoid networkPlugin cni failes to set up pod network
+- name: clean up Calico networks to avoid networkPlugin cni fails to set up pod network on next cluster creation
   shell: "{{ item }}"
   loop:
     - "ip link delete tunl0"
@@ -33,3 +34,23 @@
 
 - name: clean up Docker images to free space
   shell: docker system prune --force
+
+- name: unhold kubeadm tooling to enable deinstallation
+  shell: apt-mark unhold kubelet kubeadm kubectl
+
+- name: install kubeadm tools to provide them for usage
+  apt:
+    autoremove: yes
+    # allow downgrade if neccessary
+    force: true
+    name: "{{ item }}"
+    force_apt_get: yes
+    state: absent
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+    - docker.io
+
+- name: Remove all markers to complete
+  shell: rm -rf /marker-*

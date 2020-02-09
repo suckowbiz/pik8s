@@ -8,13 +8,10 @@
 # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin
 - name: disable swap in order for the kubelet to work properly
   block:
-    - shell: swapoff --all; dphys-swapfile swapoff; dphys-swapfile uninstall 
+    - shell: swapoff --all 
       args:
         creates: "{{ marker.swap_disabled }}"
       notify: mark swap disabled
-    - service:
-        enabled: no
-        name: dphys-swapfile
 
 # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#ensure-iptables-tooling-does-not-use-the-nftables-backend
 - name: replace nftables with iptables to be compatible with the current kubeadm packages (duplicated firewall rules, breaks kube-proxy)
@@ -68,5 +65,3 @@
         - "kubectl={{ versions.k8s }}*"
     - name: setting hold to fix kubeadm tooling since upgrade requires special attention
       shell: apt-mark hold kubelet kubeadm kubectl
-    
-# TODO Upgrade kubeadm tooling  https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/

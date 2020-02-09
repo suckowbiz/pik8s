@@ -1,0 +1,39 @@
+# Intentionally created to bake Raspberry Pi
+---
+- include: boot.yaml
+
+- name: render current depoyment to display at login
+  shell: >
+    echo "Last Ansible deployment: $(date)" > /etc/motd
+
+- name: update OS packages and handle dependency changes to stay up-to-date
+  apt:
+    upgrade: dist
+    force_apt_get: yes
+    update_cache: yes
+
+- name: enable ipv4 forward to route packages as required for Kubernetes Service delivery 
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+
+# https://wiki.debian.org/Suspend
+- name: disable suspend and hibernation to avoid box not reachable
+  systemd:
+    masked: yes
+    name: "{{ item }}"
+  loop:
+    - sleep.target
+    - suspend.target
+    - hibernate.target
+    - hybrid-sleep.target
+
+- name: avoid ssh brute force attacks by disabling password login
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#   PasswordAuthentication yes$'
+    replace: 'PasswordAuthentication no'
+  notify: restart ssh
+
+- include: docker.yaml

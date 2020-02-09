@@ -13,6 +13,10 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
    **Physical on Raspberry Pi's**
 1. Which operating system should I use? Kubernetes runs on most operating systems (e.g. Debian, Ubuntu, CentOS, etc.), plus on container-optimized OSes (e.g. CoreOS, Atomic).  
    **Raspbian**
+
+https://ubuntu.com/download/raspberry-pi
+
+
 1. Which networking solution should I use? Do I need an overlay?  
    **Flannel**
 1. Where should I run my etcd cluster?  

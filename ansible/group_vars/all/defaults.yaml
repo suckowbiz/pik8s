@@ -14,10 +14,12 @@ marker:
   password_changed: /marker-password-changed
   swap_disabled: /marker-swap-disabled
 
+# https://docs.projectcalico.org/v3.12/getting-started/kubernetes/installation/calico
 versions:
-  docker: 18.09
-  k8s: 1.16.1
-  calico: 3.9
+  docker: "18.09.9~3-0"
+  containerd: "1.2.6-3"
+  k8s: 1.16.6
+  calico: 3.12
   calico_rback: 3.3
 
 kubeadm:

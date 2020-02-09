@@ -1,4 +1,0 @@
-# Intentionally created to bake Raspberry Pi
----
-- include_tasks: bake.yaml
-- include_tasks: docker.yaml

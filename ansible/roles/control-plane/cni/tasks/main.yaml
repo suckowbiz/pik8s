@@ -1,19 +1,25 @@
 # Intentionally created to init a CNI
 ---
-- name: verify connectivity to gcr.io registries to init kubeadm
+- name: provide software required by Calico
+  apt:
+    pkg:
+      - ipip
+      - ipset
+      - iptables
+    state: present
+
+- name: pull images used by kubeadm to verify connectivity to docker registries
   shell: kubeadm config images pull
   args:
     creates: "{{ marker.cni_applied }}"
 
-- block:
-  - name: download Calico manifests to provide CNI
+- name: install Calico as of https://docs.projectcalico.org/getting-started/kubernetes/installation/calico
+  block:
+  - name: download Calico manifests to apply to k8s
     get_url:
-      url: "{{ item.url }}"
-      dest: "/var/tmp/{{ item.name }}.yaml"
+      url: "https://docs.projectcalico.org/v{{ versions.calico }}/manifests/calico.yaml"
+      dest: "/var/tmp/calico.yaml"
     register: calico_fetched
-    loop:
-      - { name: calico, url: "https://docs.projectcalico.org/v{{ versions.calico }}/manifests/calico.yaml" }
-      - { name: calico_rbac, url: "https://docs.projectcalico.org/v{{ versions.calico_rback }}/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml" }
   - name: edit calico manifest to change the required network cidr
     replace:
       path: /var/tmp/calico.yaml
@@ -22,12 +28,8 @@
     when:
       - calico_fetched is defined
       - calico_fetched.changed  
-
-- name: create the Calico resources to manage routes and complete Pod-to-Pod networking
-  shell: kubectl apply -f {{ item }}
-  args:
-    creates: "{{ marker.cni_applied }}"
-  notify: mark cni applied
-  loop:
-    - /var/tmp/calico.yaml
-    - /var/tmp/calico_rbac.yaml
+  - name: create the Calico resources to manage routes and complete Pod-to-Pod networking
+    shell: kubectl apply -f /var/tmp/calico.yaml
+    args:
+      creates: "{{ marker.cni_applied }}"
+    notify: mark cni applied
