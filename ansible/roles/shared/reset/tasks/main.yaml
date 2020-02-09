@@ -38,7 +38,7 @@
 - name: unhold kubeadm tooling to enable deinstallation
   shell: apt-mark unhold kubelet kubeadm kubectl
 
-- name: install kubeadm tools to provide them for usage
+- name: remove kubeadm tools
   apt:
     autoremove: yes
     # allow downgrade if neccessary

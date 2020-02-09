@@ -12,6 +12,7 @@ marker:
   kubeadm_holded: /marker-kubeadm-holded
   kubeadm_inited: /marker-kubeadm-inited
   password_changed: /marker-password-changed
+  rpf_disabled: /marker-rpf-disabled
   swap_disabled: /marker-swap-disabled
 
 # https://docs.projectcalico.org/v3.12/getting-started/kubernetes/installation/calico
@@ -20,7 +21,6 @@ versions:
   containerd: "1.2.6-3"
   k8s: 1.16.6
   calico: 3.12
-  calico_rback: 3.3
 
 kubeadm:
   pod_network_cidr: '10.244.0.0/16'

@@ -8,19 +8,14 @@
       - iptables
     state: present
 
-- name: pull images used by kubeadm to verify connectivity to docker registries
-  shell: kubeadm config images pull
-  args:
-    creates: "{{ marker.cni_applied }}"
-
 - name: install Calico as of https://docs.projectcalico.org/getting-started/kubernetes/installation/calico
   block:
-  - name: download Calico manifests to apply to k8s
+  - name: download Calico manifest to edit it
     get_url:
       url: "https://docs.projectcalico.org/v{{ versions.calico }}/manifests/calico.yaml"
       dest: "/var/tmp/calico.yaml"
     register: calico_fetched
-  - name: edit calico manifest to change the required network cidr
+  - name: edit Calico manifest to change the required network cidr
     replace:
       path: /var/tmp/calico.yaml
       regexp: "192.168.0.0\/16"
@@ -33,3 +28,10 @@
     args:
       creates: "{{ marker.cni_applied }}"
     notify: mark cni applied
+  # https://github.com/kubernetes-sigs/kind/issues/891
+  # https://alexbrand.dev/post/creating-a-kind-cluster-with-calico-networking/
+  - name: disable RPF (reverse path filtering) to avoid Calico nodes fail on Ubuntu
+    shell: kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
+    args:
+      creates: "{{ marker.rpf_disabled }}"
+    notify: mark rpf disabled

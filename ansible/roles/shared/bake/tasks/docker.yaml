@@ -1,4 +1,5 @@
 # Intentionally created to install docker in a specific version.
+# https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
 ---
 #https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
@@ -36,6 +37,7 @@
   block:
   - name: remove holds to unfix Docker version
     shell: apt-mark unhold docker-ce docker-ce-cli containerd.io
+    ignore_errors: yes
   # - name: installing Docker "{{ versions.docker }}"
   #   apt:
   #     autoremove: yes
@@ -53,9 +55,9 @@
       force: true
       state: present
     loop:
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce-cli_18.09.9~3-0~ubuntu-xenial_arm64.deb
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce_18.09.9~3-0~ubuntu-xenial_arm64.deb
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/containerd.io_1.2.6-3_arm64.deb
+      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/containerd.io_{{ versions.containerd }}_arm64.deb
+      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce_{{ versions.docker }}~ubuntu-xenial_arm64.deb
+      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce-cli_{{ versions.docker }}~ubuntu-xenial_arm64.deb
   - name: setting hold to fix Docker version to avoid an unwanted upgrade
     shell: apt-mark hold docker-ce docker-ce-cli containerd.io
   - name: start and enable Docker to start on boot

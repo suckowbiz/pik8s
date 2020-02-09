@@ -20,7 +20,7 @@ while [[ "${grep_result}" != "1" ]]; do
   sleep 10
 done
 echo "Success. Found nginx 'Running'."
-sleep5
+sleep 5
 
 echo -e "\n\n2. Verifying the ability to access applications remotely using port forwarding"
 readonly POD_NAME=$(kubectl get pods -l app=nginx -o jsonpath="{.items[0].metadata.name}")

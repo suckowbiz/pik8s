@@ -4,3 +4,8 @@
   file:
     path: "{{ marker.cni_applied }}"
     state: touch
+
+- name: mark rpf disabled
+  file:
+    path: "{{ marker.rpf_disabled }}"
+    state: touch

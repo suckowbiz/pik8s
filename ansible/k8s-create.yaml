@@ -41,8 +41,8 @@
     - data-plane/register
 
 # Deploy Kubernetes Plugins to complete.
-#- hosts: master
-#  become: yes
-#  gather_facts: no
-#  roles:
-#    - control-plane/cni
+- hosts: master
+  become: yes
+  gather_facts: no
+  roles:
+    - control-plane/cni

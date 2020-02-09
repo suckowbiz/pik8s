@@ -2,27 +2,33 @@
 
 This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspberry Pi** boxes with **Ansible** for **testing purpose**.
 
+## Prepare Raspberry Pi's
+
+Download 19.10 Ubuntu here [https://ubuntu.com/download/raspberry-pi](https://ubuntu.com/download/raspberry-pi).
+
+1. Mount SD card at workstation
+1. Umount the partitions of SD card to avoid writing issues:
+
+   ```bash
+   umount /dev/sdb1
+   umount /dev/sdb2
+   ```
+
+1. Flash the Ubuntu OS to SD card via: `xzcat ~/Downloads/ubuntu-18.04.3-preinstalled-server-arm64+raspi3.img.xz | sudo dd of=/dev/sdb bs=32M status=progress`
+1. Complete flashing SD card with `sync`
+1. Eject SD card from workstation and insert into Raspberry Pi
+
 ## Prerequisites
 
-- **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as Kubernetes nodes. It is assumed [Raspbian Buster](https://www.raspberrypi.org/downloads/raspbian/) is installed, SSH access is possible and Pi-to-Pi/Internet connectivity is in place.
+- **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as Kubernetes nodes.
 - **Software**: Ansible Playbook >= 2.8.2 to deploy the cluster.
 
 ## Choices Made
 
-1. Which provider should I use? A public or private cloud? Physical or virtual?  
-   **Physical on Raspberry Pi's**
-1. Which operating system should I use? Kubernetes runs on most operating systems (e.g. Debian, Ubuntu, CentOS, etc.), plus on container-optimized OSes (e.g. CoreOS, Atomic).  
-   **Raspbian**
-
-https://ubuntu.com/download/raspberry-pi
-
-
-1. Which networking solution should I use? Do I need an overlay?  
-   **Flannel**
-1. Where should I run my etcd cluster?  
-   **Together with the API at single master node**
-1. Can I configure Highly Available (HA) head nodes?  
-   **A single master node does not support HA**
+- Ubuntu 19.04
+- kubeadm for cluster setup
+- Calico as CNI
+- Docker as CRE
 
 ## Usage
 
@@ -37,16 +43,10 @@ Initial set up:
     ```
 
 1. Edit hostnames in `./ansible/hosts.yaml` to enable Ansible host location.
-1. Change api host in `./ansible/group_vars/all/defaults.yaml` to configure the API announcement.
+1. Adopt api host in `./ansible/group_vars/all/defaults.yaml` to configure the API announcement.
 1. Replace `pi10.dmz.local` at line `k8s_token: "{{ hostvars['pi10.dmz.local']['token_result'].stdout }}"` in `./ansible/k8s-create.yaml` with the hostname of the master node to fetch a Kubernetes token for worker registration.
 
 ### Create K8s Cluster
-
-Note: Cluster creation assumes the nodes are free to use and involves host provisioning that:
-
-- disables bluetooth
-- disables wifi
-- sets a random default passwort
 
 Run:
 

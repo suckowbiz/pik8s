@@ -6,17 +6,16 @@
   shell: >
     echo "Last Ansible deployment: $(date)" > /etc/motd
 
+- name: Upgrade all packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+
 - name: update OS packages and handle dependency changes to stay up-to-date
   apt:
     upgrade: dist
     force_apt_get: yes
     update_cache: yes
-
-- name: enable ipv4 forward to route packages as required for Kubernetes Service delivery 
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    sysctl_set: yes
 
 # https://wiki.debian.org/Suspend
 - name: disable suspend and hibernation to avoid box not reachable
@@ -36,4 +35,5 @@
     replace: 'PasswordAuthentication no'
   notify: restart ssh
 
+# Docker will take care of ipv4 forwarding!
 - include: docker.yaml

@@ -1,16 +1,10 @@
 # Intentionally created to set up control-plane (API)
 # See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 ---
-- name: pass bridged IPv4 traffic to iptables as required by CNI plugins to work
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: '1'
-    state: present  
-        
 - name: kubeadm
   block:
   - name: initialize kubeadm to init control plane node
-    shell: kubeadm init --control-plane-endpoint {{ api.host }}:{{ api.port }} --pod-network-cidr {{ kubeadm.pod_network_cidr }} --kubernetes-version={{ versions.k8s }} --upload-certs
+    shell: kubeadm init --control-plane-endpoint {{ inventory_hostname }}:{{ api.port }} --pod-network-cidr {{ kubeadm.pod_network_cidr }} --kubernetes-version={{ versions.k8s }} --upload-certs
     args:
       creates: "{{ marker.kubeadm_inited }}"
     notify: mark kubeadm inited
