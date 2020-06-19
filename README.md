@@ -9,14 +9,14 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 
 ## Choices Made
 
-- Ubuntu 20.04 (arm64; support for docker and docker images for armhf is limited)
+- Ubuntu 20.04 LTS 64bit (32bit has no to limited docker support)
 - kubeadm for cluster setup
 - Calico as CNI
 - Docker as CRE
 
 ## Prepare Raspberry Pi's
 
-Setup your Raspberry Pi boxes with 20.04 Ubuntu [https://ubuntu.com/download/raspberry-pi(https://ubuntu.com/download/raspberry-pi).
+Setup your Raspberry Pi boxes with 20.04 LTS 64 Bit Ubuntu [https://ubuntu.com/download/raspberry-pi(https://ubuntu.com/download/raspberry-pi).
 
 ## Usage
 
