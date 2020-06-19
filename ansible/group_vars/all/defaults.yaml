@@ -4,7 +4,7 @@ api:
   host: pi10.dmz.local
   port: 6443
 
-# Some helper to stay idempotent
+# Some helpers to stay idempotent
 marker:
   cluster_joined: /marker-cluster-joined
   docker_inited: /marker-docker-inited
@@ -15,12 +15,11 @@ marker:
   rpf_disabled: /marker-rpf-disabled
   swap_disabled: /marker-swap-disabled
 
-# https://docs.projectcalico.org/v3.12/getting-started/kubernetes/installation/calico
 versions:
-  docker: "18.09.9~3-0"
-  containerd: "1.2.6-3"
-  k8s: 1.16.6
-  calico: 3.12
+  docker: "5:19.03.11~"
+  containerd: "1.2.13-2"
+  k8s: 1.18.4
+  calico: 3.14.1
 
 kubeadm:
   pod_network_cidr: '10.244.0.0/16'

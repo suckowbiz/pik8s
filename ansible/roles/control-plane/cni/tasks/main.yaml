@@ -10,10 +10,10 @@
 
 - name: install Calico as of https://docs.projectcalico.org/getting-started/kubernetes/installation/calico
   block:
-  - name: download Calico manifest to edit it
-    get_url:
-      url: "https://docs.projectcalico.org/v{{ versions.calico }}/manifests/calico.yaml"
-      dest: "/var/tmp/calico.yaml"
+  - name: Copy Calico manifest to edit it
+    copy:
+      src: "calico-{{ versions.calico }}.yaml"
+      dest: /var/tmp/calico.yaml
     register: calico_fetched
   - name: edit Calico manifest to change the required network cidr
     replace:

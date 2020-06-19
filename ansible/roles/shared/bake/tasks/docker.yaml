@@ -12,50 +12,41 @@
     state: absent
     update_cache: yes
 
-# - name: install packages to allow apt to use a repository over https
-#   apt:
-#     pkg:
-#       - apt-transport-https
-#       - ca-certificates
-#       - curl
-#       - gnupg-agent
-#       - software-properties-common
-#     state: present
+- name: install packages to allow apt to use a repository over https
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    state: present
 
-# - name: add Docker official GPG key to verify downloads
-#   apt_key:
-#     url: https://download.docker.com/linux/ubuntu/gpg
-#     state: present
+- name: add Docker official GPG key to verify downloads
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
 
-# - name: setting up the stable repository for ubuntu
-#   apt_repository:
-#     repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable
+- name: setting up the stable repository for ubuntu
+  apt_repository:
+    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu focal stable
 
 - name: up/downgrade Docker to add the required version
   block:
   - name: remove holds to unfix Docker version
     shell: apt-mark unhold docker-ce docker-ce-cli containerd.io
     ignore_errors: yes
-  # - name: installing Docker "{{ versions.docker }}"
-  #   apt:
-  #     autoremove: yes
-  #     # allow downgrade if neccessary
-  #     force: true
-  #     force_apt_get: yes
-  #     pkg:
-  #       - "docker-ce={{ versions.docker }}*"
-  #       - "docker-ce-cli={{ versions.docker }}*"
-  #       - "containerd.io={{ versions.containerd }}*"
-  #     update_cache: yes
-  - name: install Docker version supported by k8s (https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md#unchanged)
+  - name: installing Docker "{{ versions.docker }}"
     apt:
-      deb: "{{ item }}"
+      autoremove: yes
+      # allow downgrade if neccessary
       force: true
-      state: present
-    loop:
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/containerd.io_{{ versions.containerd }}_arm64.deb
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce_{{ versions.docker }}~ubuntu-xenial_arm64.deb
-      - https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/arm64/docker-ce-cli_{{ versions.docker }}~ubuntu-xenial_arm64.deb
+      force_apt_get: yes
+      pkg:
+        - "docker-ce={{ versions.docker }}*"
+        - "docker-ce-cli={{ versions.docker }}*"
+        - "containerd.io={{ versions.containerd }}*"
+      update_cache: yes
   - name: setting hold to fix Docker version to avoid an unwanted upgrade
     shell: apt-mark hold docker-ce docker-ce-cli containerd.io
   - name: start and enable Docker to start on boot

@@ -9,36 +9,14 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 
 ## Choices Made
 
-- Ubuntu 19.04
+- Ubuntu 20.04 (arm64; support for docker and docker images for armhf is limited)
 - kubeadm for cluster setup
 - Calico as CNI
 - Docker as CRE
 
 ## Prepare Raspberry Pi's
 
-Download 19.10 Ubuntu here [https://ubuntu.com/download/raspberry-pi](https://ubuntu.com/download/raspberry-pi).
-
-1. Mount SD card at workstation
-1. Umount the partitions of SD card to avoid writing issues:
-
-   ```bash
-   umount /dev/sdb1
-   umount /dev/sdb2
-   ```
-
-1. Flash the Ubuntu OS to SD card via:  
-
-   ```bash
-   xzcat ~/Downloads/ubuntu-18.04.3-preinstalled-server-arm64+raspi3.img.xz | sudo dd of=/dev/sdb bs=32M status=progress
-   ```
-
-1. Complete flashing SD card  
-
-   ```bash
-   sync
-   ```
-
-1. Eject SD card from workstation and insert into Raspberry Pi
+Setup your Raspberry Pi boxes with 20.04 Ubuntu [https://ubuntu.com/download/raspberry-pi(https://ubuntu.com/download/raspberry-pi).
 
 ## Usage
 
@@ -48,8 +26,8 @@ Initial set up:
 
     ```bash
     # (If required generate local SSH key via: ssh-keygen)
-    # Default password: 'raspberry'
-    ssh-copy-id -o "StrictHostKeyChecking no" pi@<ip>
+    # Default password: 'ubuntu'
+    ssh-copy-id -o "StrictHostKeyChecking no" ubuntu@<ip>
     ```
 
 1. Edit hostnames in `./ansible/hosts.yaml` to enable Ansible host location.
@@ -78,7 +56,7 @@ To access the K8s API from remote:
 
 ```bash
 mkdir -p $HOME/.kube
-ssh pi@<control-plane-host> "sudo cat /etc/kubernetes/admin.conf" > $HOME/.kube/config
+ssh <control-plane-host> "sudo cat /etc/kubernetes/admin.conf" > $HOME/.kube/config
 # kubectl get nodes
 ```
 
