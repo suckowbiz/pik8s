@@ -24,6 +24,7 @@ versions:
   metallb: 0.9.3
 
 lb:
+  # This must match a range the the router knows about but does not use for DHCP.
   addresses:
     begin: 192.168.220.100
     end: 192.168.220.200
