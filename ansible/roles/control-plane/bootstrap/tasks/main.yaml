@@ -1,6 +1,12 @@
 # Intentionally created to set up control-plane (API)
 # See https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 ---
+- name: Install packages required to support k8s module of Ansible
+  pip:
+    name:
+      - openshift==0.11.2
+      - PyYAML==5.3.1
+
 - name: kubeadm
   block:
   - name: initialize kubeadm to init control plane node

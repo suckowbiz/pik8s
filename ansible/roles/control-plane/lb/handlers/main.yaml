@@ -1,0 +1,5 @@
+---
+- name: mark metallb secret added
+  file:
+    path: "{{ marker.metallb_secret_added }}"
+    state: touch

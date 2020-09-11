@@ -4,7 +4,7 @@
   gather_facts: no
   tasks:
     - name: install python to enable Ansible
-      raw: command -v python || (apt-get install --yes --no-install-recommends python)
+      raw: command -v python || (apt-get install --yes --no-install-recommends python-is-python3 python3 python3-pip)
       register: command_python
       changed_when: '"/usr/bin/python" not in command_python.stdout'
 
@@ -46,3 +46,4 @@
   gather_facts: no
   roles:
     - control-plane/cni
+    - control-plane/lb

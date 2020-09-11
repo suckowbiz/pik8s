@@ -1,0 +1,20 @@
+---
+- name: install metallb to provide a loadbalancer
+  block:
+  - name: install required namespace to run metallb
+    k8s:
+      state: present
+      definition: "{{ lookup('file', 'namespace-{{ versions.metallb }}.yaml') }}"
+  - name: install metallb itself to serve ip adresses
+    k8s:
+      state: present
+      definition: "{{ lookup('file', 'metallb-{{ versions.metallb }}.yaml') }}"
+  - name: initially add memberlist secret
+    shell: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+    args:
+      creates: "{{ marker.metallb_secret_added }}"
+    notify: mark metallb secret added
+  - name: apply metallb config to complete the setup
+    k8s:
+      state: present
+      definition: "{{ lookup('template', 'metallb-config.yaml.j2') }}"

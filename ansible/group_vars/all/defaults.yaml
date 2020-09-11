@@ -11,6 +11,7 @@ marker:
   cni_applied: /marker-cni-applied
   kubeadm_holded: /marker-kubeadm-holded
   kubeadm_inited: /marker-kubeadm-inited
+  metallb_secret_added: /marker-metallb-secret-added
   password_changed: /marker-password-changed
   rpf_disabled: /marker-rpf-disabled
   swap_disabled: /marker-swap-disabled
@@ -20,6 +21,12 @@ versions:
   containerd: "1.2.13-2"
   k8s: 1.18.4
   calico: 3.14.1
+  metallb: 0.9.3
+
+lb:
+  addresses:
+    begin: 192.168.220.100
+    end: 192.168.220.200
 
 kubeadm:
   pod_network_cidr: '10.244.0.0/16'
