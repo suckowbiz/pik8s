@@ -6,16 +6,21 @@
   shell: >
     echo "Last Ansible deployment: $(date)" > /etc/motd
 
-- name: Upgrade all packages to the latest version
-  apt:
-    name: "*"
-    state: latest
-
-- name: update OS packages and handle dependency changes to stay up-to-date
-  apt:
-    upgrade: dist
-    force_apt_get: yes
-    update_cache: yes
+- block:
+  - name: upgrade all packages to the latest version
+    apt:
+      name: "*"
+      state: latest
+    register: upgrades
+  - name: update OS packages and handle dependency changes to stay up-to-date
+    apt:
+      upgrade: dist
+      force_apt_get: yes
+      update_cache: yes
+    register: updates
+  - name: reboot to apply os changes
+    reboot:
+    when: (upgrades is defined and upgrades.changed) or (updates is defined and updates.changed)
 
 # https://wiki.debian.org/Suspend
 - name: disable suspend and hibernation to avoid box not reachable

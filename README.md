@@ -9,7 +9,7 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 
 ## Choices Made
 
-- Ubuntu 20.04 LTS 64bit (32bit has no to limited docker support)
+- Ubuntu 20.04 LTS 64bit (32bit has limited docker support)
 - kubeadm for cluster setup
 - Calico as CNI
 - Docker as CRE

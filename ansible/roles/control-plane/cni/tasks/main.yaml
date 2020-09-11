@@ -10,7 +10,7 @@
 
 - name: install Calico as of https://docs.projectcalico.org/getting-started/kubernetes/installation/calico
   block:
-  - name: Copy Calico manifest to edit it
+  - name: copy Calico manifest to edit it
     copy:
       src: "calico-{{ versions.calico }}.yaml"
       dest: /var/tmp/calico.yaml
