@@ -14,7 +14,7 @@
   gather_facts: yes
   roles:
     - shared/bake
-    - shared/kubeadm
+    - shared/k8s-tools
 
 # Bake the control-plane to prepare worker registration.
 - hosts: master

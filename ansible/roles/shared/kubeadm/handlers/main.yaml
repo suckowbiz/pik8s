@@ -1,6 +1,0 @@
-# Intentionally created to avoid disable swap runs more than once
----
-- name: mark swap disabled
-  file:
-    path: "{{ marker.swap_disabled }}"
-    state: touch

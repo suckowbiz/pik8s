@@ -39,7 +39,7 @@
       dest: /etc/systemd/network/99-default.link
     register: systemd_network
   - name: reload daemon to apply changes
-    service:
+    systemd:
       daemon_reload: yes
     when:
       - systemd_network is defined
