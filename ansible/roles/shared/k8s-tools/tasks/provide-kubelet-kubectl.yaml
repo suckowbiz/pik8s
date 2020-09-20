@@ -1,0 +1,24 @@
+---
+- name: "upgrade kubelet and kubectl"
+  block:
+  - name: unhold kubelet and kubectl tooling to enable re-/installation
+    shell: apt-mark unhold kubelet kubectl
+  - name: install kubelet and kubectl to upgrade
+    apt:
+      autoremove: yes
+      # allow downgrade if neccessary
+      force: true
+      name: "{{ item }}"
+      force_apt_get: yes
+    loop:
+      - "kubelet={{ versions.k8s }}*"
+      - "kubectl={{ versions.k8s }}*"
+  - name: setting hold to fix kubeadm tooling since upgrade requires special attention
+    shell: apt-mark hold kubectl kubelet
+
+# e.g. Upgrade requires restart
+- name: restart kubelet
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kubelet

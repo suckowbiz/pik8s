@@ -1,0 +1,14 @@
+---
+# Upgrade Kubernetes.
+- hosts: master
+  become: yes
+  gather_facts: no
+  roles:
+    - control-plane/upgrade
+
+- hosts: workers
+  serial: 1
+  become: yes
+  gather_facts: no
+  roles:
+    - data-plane/upgrade

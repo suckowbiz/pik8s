@@ -1,0 +1,16 @@
+# https://v1-18.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+- include_tasks: ../../shared/k8s-tools/tasks/provide-kubeadm.yaml
+
+- name: "upgrade current worker node"
+  shell: kubectl drain "{{ inventory_hostname }}" --force --ignore-daemonsets
+  delegate_to: "{{ api.host }}"
+
+- name: "upgrade current worker node"
+  shell: kubeadm upgrade node -v=5
+
+- name: "upgrade current worker node"
+  shell: kubectl uncordon "{{ inventory_hostname }}" -v=5
+  delegate_to: "{{ api.host }}"
+
+- include_tasks: ../../shared/k8s-tools/tasks/provide-kubelet-kubectl.yaml

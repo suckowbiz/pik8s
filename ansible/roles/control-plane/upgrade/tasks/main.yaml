@@ -1,0 +1,13 @@
+# https://v1-18.docs.kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+- include_tasks: ../../shared/k8s-tools/tasks/provide-kubeadm.yaml
+
+- name: "upgrade control plane node"
+  shell: "{{ item }}"
+  loop:
+    - kubectl drain "{{ api.host }}" --force --ignore-daemonsets
+    - kubeadm upgrade plan
+    - kubeadm upgrade apply v{{ versions.k8s }} --yes
+    - kubectl uncordon {{ api.host }}
+
+- include_tasks: ../../shared/k8s-tools/tasks/provide-kubelet-kubectl.yaml

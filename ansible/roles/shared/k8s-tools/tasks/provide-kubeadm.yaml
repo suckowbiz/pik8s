@@ -1,0 +1,22 @@
+---
+- name: "upgrade kubeadm"
+  block:
+  - name: update apt caches to consider added kubernetes repository
+    apt:
+      update_cache: yes
+      force_apt_get: yes
+  - name: unhold kubeadm tooling to enable re-/installation
+    shell: apt-mark unhold kubeadm
+  - name: install kubeadm to upgrade
+    apt:
+        autoremove: yes
+        # allow downgrade if neccessary
+        force: true
+        name: "{{ item }}"
+        force_apt_get: yes
+    loop:
+      - "kubeadm={{ versions.k8s }}*"
+  - name: setting hold to fix kubeadm tooling since upgrade requires special attention
+    shell: apt-mark hold kubeadm
+  - name: pull images used by kubeadm to update and verify connectivity to docker registries
+    shell: kubeadm config images pull
