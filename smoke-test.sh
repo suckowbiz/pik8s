@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
-# Intentionally created to run a smoke-test as described here: https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/13-smoke-test.md
+# Intentionally created to run a smoke-test as described here:
+# https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/13-smoke-test.md
+
 readonly GREP_RUNNING_NGINX='kubectl get pods -l app=nginx  |grep "Running" --count'
 if [[ "${API_IP}" = "" ]]; then
   echo "Failure to read API_IP. Provide the current master node external IP to run tests."

@@ -1,4 +1,4 @@
-# Fetched from:https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml 
+# Fetched from:https://raw.githubusercontent.com/metallb/metallb/v0.9.4/manifests/metallb.yaml
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -300,6 +300,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        # needed when another software is also using memberlist / port 7946
+        #- name: METALLB_ML_BIND_PORT
+        #  value: "7946"
         - name: METALLB_ML_LABELS
           value: "app=metallb,component=speaker"
         - name: METALLB_ML_NAMESPACE
@@ -311,7 +314,7 @@ spec:
             secretKeyRef:
               name: memberlist
               key: secretkey
-        image: metallb/speaker:v0.9.3
+        image: metallb/speaker:v0.9.4
         imagePullPolicy: Always
         name: speaker
         ports:
@@ -367,7 +370,7 @@ spec:
       - args:
         - --port=7472
         - --config=config
-        image: metallb/controller:v0.9.3
+        image: metallb/controller:v0.9.4
         imagePullPolicy: Always
         name: controller
         ports:

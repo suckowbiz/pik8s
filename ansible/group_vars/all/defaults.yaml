@@ -17,11 +17,11 @@ marker:
   swap_disabled: /marker-swap-disabled
 
 versions:
-  docker: "5:19.03.11~"
-  containerd: "1.2.13-2"
-  k8s: 1.18.9
-  calico: 3.14.1
-  metallb: 0.9.3
+  docker: "5:19.03.13~"
+  containerd: "1.3.7"
+  k8s: 1.18.10
+  calico: 3.16.3
+  metallb: 0.9.4
 
 lb:
   # This must match a range the the router knows about but does not use for DHCP.
