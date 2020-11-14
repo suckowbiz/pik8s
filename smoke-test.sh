@@ -12,6 +12,8 @@ fi
 
 echo "Cleaning up orphans from possible previous failed runs..."
 kubectl delete deployments.apps nginx 2>/dev/null
+kubectl delete service nginx 2>/dev/null
+sleep 5
 
 echo -e "\n\n1. Verifying the ability to create and manage deployments..."
 kubectl create deployment nginx --image=nginx
@@ -58,18 +60,32 @@ else
   echo "Success. Command execution succeeded."
 fi
 
-echo -e "\n\n5. Verify the ability to expose applications using a service."
+echo -e "\n\n5. Verify the ability to expose applications using service type NodePort."
 kubectl expose deployment nginx --port 80 --type NodePort
 sleep 5
 readonly NODE_PORT=$(kubectl get svc nginx --output=jsonpath='{range .spec.ports[0]}{.nodePort}')
 readonly SERVICE_CALL_RES=$(curl --silent --head "http://${API_IP}:${NODE_PORT}" 1>/dev/null; echo $?)
+kubectl delete service nginx || true
 echo "NodePort: ${NODE_PORT}"
 if [[ "${SERVICE_CALL_RES}" = "0" ]]; then
   echo "Success. Service exposed."
 else
   echo "Failure. Service not reachable."
+  exit
 fi
-echo -e '\n\n'
 
+echo -e "\n\n6. Verify the ability to expose applications using service type LoadBalancer"
+kubectl expose deployment nginx --port 80 --type LoadBalancer
+sleep 5
+readonly INGRESS_IP=$(kubectl get svc nginx --output=jsonpath='{range .status.loadBalancer.ingress[0]}{.ip}')
 kubectl delete service nginx || true
+echo "INGRESS_IP: ${INGRESS_IP}"
+if [[ "${INGRESS_IP}" = "" ]]; then
+  echo "Failure. No IP found."
+  exit
+else
+  echo "Success. Service exposed."
+fi
+
+echo -e '\n\n'
 kubectl delete deployments.apps nginx 2>/dev/null
