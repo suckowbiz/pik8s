@@ -31,3 +31,8 @@ lb:
 
 kubeadm:
   pod_network_cidr: '10.244.0.0/16'
+
+nfs:
+  name: 'nfs-storage'
+  server_ip: 192.168.210.5
+  volume_path: '/volume1/k8s/'

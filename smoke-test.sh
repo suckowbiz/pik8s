@@ -87,5 +87,7 @@ else
   echo "Success. Service exposed."
 fi
 
+# TODO: Add a test for csi
+
 echo -e '\n\n'
 kubectl delete deployments.apps nginx 2>/dev/null

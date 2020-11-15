@@ -1,0 +1,6 @@
+# Fetched from: https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nfs-system
+

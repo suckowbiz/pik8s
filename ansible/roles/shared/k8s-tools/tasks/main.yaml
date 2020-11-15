@@ -61,5 +61,11 @@
         update_cache: yes
         force_apt_get: yes
 
+- name: provide nfs common tools to enable nfs client provisioner to mount volumes
+  apt:
+    name: nfs-common
+    state: present
+    force_apt_get: yes
+
 - include_tasks: provide-kubeadm.yaml
 - include_tasks: provide-kubelet-kubectl.yaml

@@ -1,0 +1,22 @@
+---
+# References:
+# - https://www.net7.be/blog/article/kubernetes_bare_metal_storage.html
+# - https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+- name: install nfs client provisioner
+  block:
+  - name: install namespace to add nfs client provisioner to
+    k8s:
+      state: present
+      definition: "{{ lookup('file', 'namespace.yaml') }}"
+  - name: install rbac to authorize nfs client provisioner
+    k8s:
+      state: present
+      definition: "{{ lookup('file', 'rbac.yaml') }}"
+  - name: install nfs client provisioner to dynamically provide pvc's
+    k8s:
+      state: present
+      definition: "{{ lookup('template', 'deploy.yaml.j2') }}"
+  - name: install nfs client provisioner storage class to handle pvc addition/removal
+    k8s:
+      state: present
+      definition: "{{ lookup('template', 'class.yaml.j2') }}"

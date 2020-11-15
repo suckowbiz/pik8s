@@ -47,3 +47,4 @@
   roles:
     - control-plane/cni
     - control-plane/lb
+    - control-plane/csi

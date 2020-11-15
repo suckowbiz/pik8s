@@ -5,7 +5,9 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 ## Prerequisites
 
 - **Hardware**: Availability of 4 Raspberry Pi boxes (1 master, 3 worker) to be used as Kubernetes nodes.
-- **Software**: Ansible Playbook >= 2.8.2 to deploy the cluster.
+- **Software**:
+  - Ansible Playbook >= 2.8.2 to deploy the cluster.
+  - NAS Server
 
 ## Choices Made
 
@@ -13,6 +15,7 @@ This repository was created to deploy a **Kubernetes** (K8s) cluster on **Raspbe
 - kubeadm for cluster setup
 - Calico as CNI
 - Docker as CRE
+- NAS with https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner as CSI
 
 ## Prepare Raspberry Pi's
 
@@ -39,7 +42,7 @@ Initial set up:
 Run:
 
 ```bash
-./create.sh
+./install.sh
 ```
 
 ### Delete K8s Cluster
@@ -47,7 +50,7 @@ Run:
 Run:
 
 ```bash
-./delete.sh
+./uninstall.sh
 ```
 
 ### API Access
