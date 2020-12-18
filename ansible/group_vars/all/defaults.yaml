@@ -17,10 +17,10 @@ marker:
   swap_disabled: /marker-swap-disabled
 
 versions:
-  docker: "5:19.03.13~"
-  containerd: "1.3.7"
-  k8s: 1.18.12
-  calico: 3.16.5
+  docker: "5:20.10.1~"
+  containerd: "1.4.3"
+  k8s: 1.18.14
+  calico: 3.17.1
   metallb: 0.9.5
 
 lb:
