@@ -13,6 +13,7 @@ fi
 echo "Cleaning up orphans from possible previous failed runs..."
 kubectl delete deployments.apps nginx 2>/dev/null
 kubectl delete service nginx 2>/dev/null
+kubectl delete pvc test-claim 2>/dev/null
 sleep 5
 
 echo -e "\n\n1. Verifying the ability to create and manage deployments..."
@@ -87,7 +88,32 @@ else
   echo "Success. Service exposed."
 fi
 
-# TODO: Add a test for csi
+echo -e "\n\n7. Verify the ability to create a NFS pvc."
+cat << 'EOF' | kubectl create -f -
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+spec:
+  storageClassName: managed-nfs-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi 
+EOF
+readonly GREP_BOUND_PVC='kubectl get pvc |grep "Bound" --count'
+echo "Waiting for pvc to be 'Bound'..."
+grep_result=$(eval "${GREP_BOUND_PVC}")
+while [[ "${grep_result}" != "1" ]]; do
+  grep_result=$(eval "${GREP_BOUND_PVC}")
+  sleep 10
+done
+echo "Success. Found pvc 'Bound'."
+kubectl delete pvc test-claim 2>/dev/null || true
+sleep 5
 
 echo -e '\n\n'
 kubectl delete deployments.apps nginx 2>/dev/null
