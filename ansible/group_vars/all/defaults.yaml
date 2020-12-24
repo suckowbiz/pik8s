@@ -19,7 +19,7 @@ marker:
 versions:
   docker: "5:20.10.1~"
   containerd: "1.4.3"
-  k8s: 1.18.14
+  k8s: 1.19.6
   calico: 3.17.1
   metallb: 0.9.5
 
