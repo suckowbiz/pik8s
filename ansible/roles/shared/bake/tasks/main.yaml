@@ -6,6 +6,11 @@
   shell: >
     echo "Last Ansible deployment: $(date)" > /etc/motd
 
+- name: avoid unattended upgrades to not disturb planned upgrades
+  apt:
+    name: unattended-upgrades
+    state: absent
+
 - block:
   - name: upgrade all packages to the latest version
     apt:
